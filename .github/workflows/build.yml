@@ -1,0 +1,70 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Build (${{ matrix.arch }}, ${{ matrix.profile }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x64
+            runner: windows-latest
+            target: x86_64-pc-windows-msvc
+            profile: debug
+          - arch: x64
+            runner: windows-latest
+            target: x86_64-pc-windows-msvc
+            profile: release
+          - arch: arm64
+            runner: windows-11-arm
+            target: aarch64-pc-windows-msvc
+            profile: debug
+          - arch: arm64
+            runner: windows-11-arm
+            target: aarch64-pc-windows-msvc
+            profile: release
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: ${{ matrix.target }}-${{ matrix.profile }}
+
+      - name: Load environment for rc.exe
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch == 'arm64' && 'arm64' || 'x64' }}
+
+      - name: Build workspace and examples
+        shell: pwsh
+        run: cargo build --workspace --all-targets --locked --target ${{ matrix.target }} ${{ matrix.profile == 'release' && '--release' || '' }}
+
+      - name: Run tests
+        if: matrix.arch == 'x64'
+        shell: pwsh
+        run: cargo test --workspace --locked --target ${{ matrix.target }} ${{ matrix.profile == 'release' && '--release' || '' }}
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: examples-${{ matrix.arch }}-${{ matrix.profile }}
+          path: target/${{ matrix.target }}/${{ matrix.profile }}/examples/*.exe
+          if-no-files-found: error

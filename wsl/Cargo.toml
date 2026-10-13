@@ -1,0 +1,15 @@
+[package]
+name = "wsl"
+description = "Safe, idiomatic Rust API for WSL containers (Microsoft.WSL.Containers)"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[dependencies]
+derive_more = { version = "2.1.1", features = ["display", "from"] }
+wsl-sys = { path = "../wsl-sys" }
+log = "0.4"
+rand = { version = "0.10.3", features = ["thread_rng"] }
+
+[dev-dependencies]
+env_logger = "0.11"

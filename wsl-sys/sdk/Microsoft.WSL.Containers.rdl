@@ -1,0 +1,574 @@
+#[winrt]
+mod Microsoft {
+    mod WSL {
+        mod Containers {
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class AuthenticateResult {
+                IAuthenticateResult,
+            }
+            #[repr(i32)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            enum Component {
+                VirtualMachinePlatform = 1,
+                WslPackage = 2,
+                SdkNeedsUpdate = 4,
+            }
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class Container {
+                IContainer,
+                Windows::Foundation::IClosable,
+            }
+            #[Windows::Foundation::Metadata::Activatable(IContainerNamedVolumeFactory, 1)]
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Threading(Both)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class ContainerNamedVolume {
+                IContainerNamedVolume,
+            }
+            #[repr(i32)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            enum ContainerNetworkingMode {
+                None = 0,
+                Bridged = 1,
+            }
+            #[Windows::Foundation::Metadata::Activatable(IContainerPortMappingFactory, 1)]
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Threading(Both)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class ContainerPortMapping {
+                IContainerPortMapping,
+            }
+            #[Windows::Foundation::Metadata::Activatable(IContainerSettingsFactory, 1)]
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Threading(Both)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class ContainerSettings {
+                IContainerSettings,
+            }
+            #[repr(i32)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            enum ContainerState {
+                Invalid = 0,
+                Created = 1,
+                Running = 2,
+                Exited = 3,
+                Deleted = 4,
+            }
+            #[Windows::Foundation::Metadata::Activatable(IContainerVolumeFactory, 1)]
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Threading(Both)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class ContainerVolume {
+                IContainerVolume,
+            }
+            #[repr(u32)]
+            #[flags]
+            #[Windows::Foundation::Metadata::Version(1)]
+            enum DeleteContainerOption {
+                None = 0,
+                Force = 1,
+            }
+            #[repr(i32)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            enum Error {
+                ImageNotFound = -2147219967,
+                ContainerPrefixAmbiguous = -2147219966,
+                ContainerNotFound = -2147219965,
+                VolumeNotFound = -2147219964,
+                ContainerNotRunning = -2147219963,
+                ContainerIsRunning = -2147219962,
+                SessionReserved = -2147219961,
+                InvalidSessionName = -2147219960,
+                NetworkNotFound = -2147219959,
+                WindowsUpdateSearchFailed = -2147219958,
+                SdkUpdateNeeded = -2147219957,
+                ContainerDisabled = -2147219956,
+                RegistryBlockedByPolicy = -2147219955,
+                VolumeNotAvailable = -2147219954,
+                ContainerDeleted = -2147219949,
+            }
+            #[guid(0xcd46c365_6051_54ab_a466_bb0a8ee38668)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(AuthenticateResult)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IAuthenticateResult {
+                #[get]
+                IdentityToken: String;
+                #[get]
+                TokenType: IdentityTokenType;
+            }
+            #[guid(0x9367a70a_770c_5abe_b905_032087602efe)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(Container)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IContainer {
+                fn Start(&self);
+                fn Stop(&self, signal: Signal, timeout: Windows::Foundation::TimeSpan);
+                fn Delete(&self, flags: DeleteContainerOption);
+                fn CreateProcess(&self, newProcessSettings: ProcessSettings) -> Process;
+                fn Inspect(&self) -> String;
+                #[get]
+                Id: String;
+                #[get]
+                InitProcess: Process;
+                #[get]
+                State: ContainerState;
+            }
+            #[guid(0x5513390b_4cbe_5cde_99ca_b710ab67469c)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(ContainerNamedVolume)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IContainerNamedVolume {
+                Name: String;
+                ContainerPath: String;
+                ReadOnly: bool;
+            }
+            #[guid(0xa61689f3_6699_5bb0_a31f_9bd565c8e2cd)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(ContainerNamedVolume)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IContainerNamedVolumeFactory {
+                fn CreateInstance(&self, name: String, containerPath: String, readOnly: bool) -> ContainerNamedVolume;
+            }
+            #[guid(0x4aa36dca_84f0_5bcd_8d4b_81fdbe72802a)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(ContainerPortMapping)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IContainerPortMapping {
+                WindowsPort: u16;
+                ContainerPort: u16;
+                Protocol: PortProtocol;
+                WindowsAddress: Windows::Networking::HostName;
+            }
+            #[guid(0xf9de7a79_9b26_53f0_ac07_f328c13a5267)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(ContainerPortMapping)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IContainerPortMappingFactory {
+                fn CreateInstance(&self, windowsPort: u16, containerPort: u16, protocol: PortProtocol) -> ContainerPortMapping;
+            }
+            #[guid(0x1c49c7b5_89d2_57eb_965a_66cb6860790c)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(ContainerSettings)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IContainerSettings {
+                ImageName: String;
+                Name: String;
+                InitProcess: ProcessSettings;
+                NetworkingMode: Windows::Foundation::IReference<ContainerNetworkingMode>;
+                HostName: String;
+                DomainName: String;
+                EnableAutoRemove: bool;
+                EnableGpu: bool;
+                Privileged: bool;
+                PortMappings: Windows::Foundation::Collections::IVector<ContainerPortMapping>;
+                Volumes: Windows::Foundation::Collections::IVector<ContainerVolume>;
+                NamedVolumes: Windows::Foundation::Collections::IVector<ContainerNamedVolume>;
+            }
+            #[guid(0x9042f997_330f_52cc_a2bc_d2b23b443b63)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(ContainerSettings)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IContainerSettingsFactory {
+                fn CreateInstance(&self, imageName: String) -> ContainerSettings;
+            }
+            #[guid(0xc5184b17_16bc_5a0c_aa6a_ad3ba5290fe6)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(ContainerVolume)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IContainerVolume {
+                WindowsPath: String;
+                ContainerPath: String;
+                ReadOnly: bool;
+            }
+            #[guid(0xd7f7d612_eb0e_5fcb_8721_2205ead26460)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(ContainerVolume)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IContainerVolumeFactory {
+                fn CreateInstance(&self, windowsPath: String, containerPath: String, readOnly: bool) -> ContainerVolume;
+            }
+            #[guid(0x34412b8a_a683_5f89_8a01_1b2b8eba002f)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(ImageInfo)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IImageInfo {
+                #[get]
+                Name: String;
+                #[get]
+                Sha256: Windows::Storage::Streams::IBuffer;
+                #[get]
+                Size: u64;
+                #[get]
+                CreatedTimestamp: Windows::Foundation::DateTime;
+            }
+            #[guid(0x233c6d5a_9a1f_5858_9cd5_ebb37f2f5eec)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(ImageProgress)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IImageProgress {
+                #[get]
+                Id: String;
+                #[get]
+                Status: ImageProgressStatus;
+                #[get]
+                CurrentBytes: u64;
+                #[get]
+                TotalBytes: u64;
+            }
+            #[guid(0x8848f298_6c6c_56ab_a345_6b664971397d)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(InstallOptions)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IInstallOptions {
+                Components: Windows::Foundation::Collections::IVectorView<Component>;
+                Repair: bool;
+            }
+            #[guid(0xd760c2d7_ac63_5e4a_a7dd_f36943406f2b)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(InstallProgress)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IInstallProgress {
+                #[get]
+                Component: Component;
+                #[get]
+                Progress: u32;
+                #[get]
+                Total: u32;
+            }
+            #[guid(0xd61b55c7_8aa0_5804_9783_70d1df7c4dd0)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(Process)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IProcess {
+                fn Start(&self);
+                fn Signal(&self, signal: Signal);
+                fn GetOutputStream(&self, outputHandle: ProcessOutputHandle) -> Windows::Storage::Streams::IInputStream;
+                fn GetInputStream(&self) -> Windows::Storage::Streams::IOutputStream;
+                #[get]
+                Pid: u32;
+                #[get]
+                State: ProcessState;
+                #[get]
+                ExitCode: i32;
+                event OutputReceived: ProcessOutputHandler;
+                event ErrorReceived: ProcessOutputHandler;
+                event Exited: ProcessExitHandler;
+            }
+            #[guid(0x0999097c_12a6_5d49_9f37_12078c79d4de)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(ProcessCrashInformation)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IProcessCrashInformation {
+                #[get]
+                DumpPath: String;
+                #[get]
+                ProcessName: String;
+                #[get]
+                Pid: u32;
+                #[get]
+                Signal: u32;
+                #[get]
+                Timestamp: Windows::Foundation::DateTime;
+            }
+            #[guid(0x554005b2_b77c_51e0_b103_39ebc4ea5cd0)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(ProcessSettings)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IProcessSettings {
+                WorkingDirectory: String;
+                CommandLine: Windows::Foundation::Collections::IVector<String>;
+                EnvironmentVariables: Windows::Foundation::Collections::IMap<String, String>;
+                OutputMode: ProcessOutputMode;
+                EnableStandardInput: bool;
+            }
+            #[guid(0x6a0a49d3_4b8f_5caf_a6c3_ace0406c2433)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(PullImageOptions)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IPullImageOptions {
+                Uri: String;
+                RegistryAuth: String;
+            }
+            #[guid(0xd90b38fa_f4e9_5b25_8c1e_8074f7f1c9f7)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(PullImageOptions)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IPullImageOptionsFactory {
+                fn CreateInstance(&self, uri: String) -> PullImageOptions;
+            }
+            #[guid(0x4d32b58b_6530_51e0_b068_4d8e79133250)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(PushImageOptions)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IPushImageOptions {
+                Image: String;
+                RegistryAuth: String;
+            }
+            #[guid(0x90b38335_afef_5d5e_8943_9d86f3b6622a)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(PushImageOptions)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IPushImageOptionsFactory {
+                fn CreateInstance(&self, image: String, registryAuth: String) -> PushImageOptions;
+            }
+            #[guid(0x1c2429be_33b3_5476_b5b5_ce1a2c35b902)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(ServiceVersion)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IServiceVersion {
+                #[get]
+                Major: u32;
+                #[get]
+                Minor: u32;
+                #[get]
+                Revision: u32;
+            }
+            #[guid(0x50141550_1d16_599f_b8fb_137a971b68a6)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(Session)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface ISession {
+                fn Start(&self);
+                fn Terminate(&self);
+                fn CreateContainer(&self, containerSettings: ContainerSettings) -> Container;
+                fn OpenContainer(&self, nameOrId: String, initProcessOutputMode: ProcessOutputMode) -> Container;
+                fn PullImage(&self, options: PullImageOptions);
+                fn PullImageAsync(&self, options: PullImageOptions) -> Windows::Foundation::IAsyncActionWithProgress<ImageProgress>;
+                fn ImportImage(&self, path: String, imageName: String);
+                fn ImportImageAsync(&self, path: String, imageName: String) -> Windows::Foundation::IAsyncActionWithProgress<ImageProgress>;
+                fn LoadImage(&self, path: String);
+                fn LoadImageAsync(&self, path: String) -> Windows::Foundation::IAsyncActionWithProgress<ImageProgress>;
+                fn PushImage(&self, options: PushImageOptions);
+                fn PushImageAsync(&self, options: PushImageOptions) -> Windows::Foundation::IAsyncActionWithProgress<ImageProgress>;
+                fn DeleteImage(&self, nameOrId: String);
+                fn TagImage(&self, options: TagImageOptions);
+                fn CreateVhdVolume(&self, options: VhdOptions);
+                fn DeleteVhdVolume(&self, name: String);
+                fn Authenticate(&self, serverAddress: Windows::Foundation::Uri, username: String, password: String) -> AuthenticateResult;
+                fn GetImages(&self) -> Windows::Foundation::Collections::IVectorView<ImageInfo>;
+                event Terminated: SessionTerminationHandler;
+                event ProcessCrashed: ProcessCrashHandler;
+            }
+            #[guid(0xbfbbfec3_4051_54f2_9519_cbc18f58781a)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(Session)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface ISessionFactory {
+                fn CreateInstance(&self, settings: SessionSettings) -> Session;
+            }
+            #[guid(0xf1925d0d_5874_55b4_bbcf_db2df0d459c7)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(SessionSettings)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface ISessionSettings {
+                Name: String;
+                StoragePath: String;
+                CpuCount: Windows::Foundation::IReference<u32>;
+                MemorySizeInMB: Windows::Foundation::IReference<u32>;
+                Timeout: Windows::Foundation::IReference<Windows::Foundation::TimeSpan>;
+                VhdRequirements: VhdOptions;
+                EnableGpu: bool;
+            }
+            #[guid(0x0729d3f5_98cc_5172_b001_5998eed020bf)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(SessionSettings)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface ISessionSettingsFactory {
+                fn CreateInstance(&self, name: String, storagePath: String) -> SessionSettings;
+            }
+            #[guid(0xcf0036bc_362c_5b5b_99a6_f531f1eaccaa)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(TagImageOptions)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface ITagImageOptions {
+                Image: String;
+                Repository: String;
+                Tag: String;
+            }
+            #[guid(0xda9eae2e_3d3b_5795_8777_710150419da3)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(TagImageOptions)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface ITagImageOptionsFactory {
+                fn CreateInstance(&self, image: String, repository: String, tag: String) -> TagImageOptions;
+            }
+            #[guid(0xb0052360_2ec4_59bd_a5c6_f0e97d78f0f0)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(VhdOptions)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IVhdOptions {
+                Name: String;
+                Size: u64;
+                Type: VhdType;
+                Owner: Windows::Foundation::IReference<VhdOwner>;
+            }
+            #[guid(0x1ec6513d_3a6a_5ff2_83af_7da58f711326)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(VhdOptions)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IVhdOptionsFactory {
+                fn CreateInstance(&self, name: String, size: u64, r#type: VhdType) -> VhdOptions;
+            }
+            #[guid(0x4efba526_c636_5e81_b656_b2b7cb88b125)]
+            #[Windows::Foundation::Metadata::ExclusiveTo(WslcService)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            interface IWslcServiceStatics {
+                fn GetMissingComponents(&self) -> Windows::Foundation::Collections::IVectorView<Component>;
+                fn GetVersion(&self) -> ServiceVersion;
+                fn InstallWithDependencies(&self, options: InstallOptions);
+                fn InstallWithDependenciesAsync(&self, options: InstallOptions) -> Windows::Foundation::IAsyncActionWithProgress<InstallProgress>;
+            }
+            #[repr(i32)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            enum IdentityTokenType {
+                Unknown = 0,
+                Token = 1,
+                Credentials = 2,
+            }
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class ImageInfo {
+                IImageInfo,
+            }
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class ImageProgress {
+                IImageProgress,
+            }
+            #[repr(i32)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            enum ImageProgressStatus {
+                Unknown = 0,
+                Pulling = 1,
+                Waiting = 2,
+                Downloading = 3,
+                Verifying = 4,
+                Extracting = 5,
+                Complete = 6,
+            }
+            #[Windows::Foundation::Metadata::Activatable(1)]
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Threading(Both)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class InstallOptions {
+                IInstallOptions,
+            }
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class InstallProgress {
+                IInstallProgress,
+            }
+            #[repr(i32)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            enum PortProtocol {
+                TCP = 0,
+                UDP = 1,
+            }
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class Process {
+                IProcess,
+                Windows::Foundation::IClosable,
+            }
+            #[guid(0x6023c7ce_e307_5427_b3e5_4656291379ea)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            delegate fn ProcessCrashHandler(information: ProcessCrashInformation);
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class ProcessCrashInformation {
+                IProcessCrashInformation,
+            }
+            #[guid(0x63a60241_bc8f_5e76_8750_7ae0e5fc5b4c)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            delegate fn ProcessExitHandler(exitCode: i32);
+            #[repr(i32)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            enum ProcessOutputHandle {
+                StandardOutput = 1,
+                StandardError = 2,
+            }
+            #[guid(0xe3940456_641a_53ab_9d07_d6ac6f0930b4)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            delegate fn ProcessOutputHandler(data: [u8]);
+            #[repr(i32)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            enum ProcessOutputMode {
+                Discard = 0,
+                Stream = 1,
+                Event = 2,
+            }
+            #[Windows::Foundation::Metadata::Activatable(1)]
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Threading(Both)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class ProcessSettings {
+                IProcessSettings,
+            }
+            #[repr(i32)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            enum ProcessState {
+                Unknown = 0,
+                Running = 1,
+                Exited = 2,
+                Signalled = 3,
+            }
+            #[Windows::Foundation::Metadata::Activatable(IPullImageOptionsFactory, 1)]
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Threading(Both)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class PullImageOptions {
+                IPullImageOptions,
+            }
+            #[Windows::Foundation::Metadata::Activatable(IPushImageOptionsFactory, 1)]
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Threading(Both)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class PushImageOptions {
+                IPushImageOptions,
+            }
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class ServiceVersion {
+                IServiceVersion,
+            }
+            #[Windows::Foundation::Metadata::Activatable(ISessionFactory, 1)]
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Threading(Both)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class Session {
+                ISession,
+                Windows::Foundation::IClosable,
+            }
+            #[Windows::Foundation::Metadata::Activatable(ISessionSettingsFactory, 1)]
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Threading(Both)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class SessionSettings {
+                ISessionSettings,
+            }
+            #[guid(0x1444eeb4_71d6_5bd2_b055_593726534628)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            delegate fn SessionTerminationHandler(reason: SessionTerminationReason);
+            #[repr(i32)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            enum SessionTerminationReason {
+                Unknown = 0,
+                Shutdown = 1,
+                Crashed = 2,
+            }
+            #[repr(i32)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            enum Signal {
+                None = 0,
+                SIGHUP = 1,
+                SIGINT = 2,
+                SIGQUIT = 3,
+                SIGKILL = 9,
+                SIGTERM = 15,
+            }
+            #[Windows::Foundation::Metadata::Activatable(ITagImageOptionsFactory, 1)]
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Threading(Both)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class TagImageOptions {
+                ITagImageOptions,
+            }
+            #[Windows::Foundation::Metadata::Activatable(IVhdOptionsFactory, 1)]
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Threading(Both)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class VhdOptions {
+                IVhdOptions,
+            }
+            #[Windows::Foundation::Metadata::Version(1)]
+            struct VhdOwner {
+                Uid: u32,
+                Gid: u32,
+            }
+            #[repr(i32)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            enum VhdType {
+                Dynamic = 0,
+                Fixed = 1,
+            }
+            #[Windows::Foundation::Metadata::MarshalingBehavior(Agile)]
+            #[Windows::Foundation::Metadata::Static(IWslcServiceStatics, 1)]
+            #[Windows::Foundation::Metadata::Threading(Both)]
+            #[Windows::Foundation::Metadata::Version(1)]
+            class WslcService {}
+        }
+    }
+}

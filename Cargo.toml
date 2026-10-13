@@ -1,0 +1,11 @@
+[workspace]
+resolver = "3"
+members = ["wsl-sys", "wsl"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+description = "OnWeek 2026-10: Fun with WSL SDK & Rust"
+repository = "https://github.com/hugsy/hype"
+readme = "./README.md"
+authors = ["Christophe Alladoum <christophe.alladoum@elastic.co>"]

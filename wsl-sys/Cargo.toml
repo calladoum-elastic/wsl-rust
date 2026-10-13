@@ -1,0 +1,24 @@
+[package]
+name = "wsl-sys"
+description = "Raw WinRT projection of Microsoft.WSL.Containers (wslcsdk.dll), generated from its metadata (RDL)"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+
+[features]
+default = ["embed-runtime"]
+embed-runtime = ["dep:embed-resource"]
+
+[dependencies]
+windows-collections = "0.100"
+windows-core = "0.100"
+windows-future = "0.100"
+windows-link = "0.100"
+windows-reference = "0.100"
+windows-time = "0.100"
+
+[build-dependencies]
+embed-resource = { version = "3.0", optional = true }
+windows-bindgen = "0.100"
+windows-metadata = "0.100"
+windows-rdl = "0.100"

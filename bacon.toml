@@ -1,0 +1,4 @@
+[jobs.doc]
+command = ["cargo", "doc", "--no-deps"]
+need_stdout = true
+allow_warnings = true
